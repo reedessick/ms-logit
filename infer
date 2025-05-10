@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+
+"""infer the parameters of the model based on the data
+"""
+__author__ = "Reed Essick (reed.essick@gmail.com)"
+
+#-------------------------------------------------
+
+import numpy as np
+
+import jax
+from jax import random
+from jax import numpy as jnp
+from jax.scipy.special import logsumexp
+
+import numpyro
+import numpyro.distributions as dist
+from numpyro.infer import (MCMC, NUTS)
+
+#-------------------------------------------------
+
+# load data
+
+data = np.genfromtxt('data.csv.gz', names=True, delimiter=',')
+
+num_samp = len(data)
+num_dim = len(data.dtype.names) - 2
+
+improved = data['obs']
+features = data[:,:num_dim]
+
+#------------------------
+
+# build a model
+
+def model(num_dim, features, improved):
+
+    # draw priors for coefficients
+    coeffs = numpyro.sample("coeffs", dist.Uniform(-1.0, +1.0), sample_shape=(num_dim,))
+
+    # compute probabilities
+    logprobs = numpyro.deterministic("logprobs", -jnp.log(1+jnp.exp(jnp.sum(features*coeffs, axis=1))))
+    logprobs_unimproved = jnp.log(1-jnp.exp(logprobs))
+
+    # add target distribution as a factor
+    numpyro.factor("logprob", jnp.sum(improved*logprobs + (1-improved)*logprobs_unimproved))
+
+#------------------------
+
+# sample from that model
+
+# instantiate the sampler
+mcmc = MCMC(NUTS(model), num_warmup=100, num_samples=100)
+
+# run the sample
+mcmc.run(random.PRNGKey(seed), num_dim, features, improved)
+samples = mcmc.get_samples()
+
+# record the likelihood of each sample
+samples.update(numpyro.infer.log_likelihood(model, num_dim, features, improved)
+
+mcmc.print_summary(exclude_deterministic=False)

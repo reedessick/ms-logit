@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+"""a simple script to generate fake data
+"""
+__author__ = "Reed Essick (reed.essick@gmail.com)"
+
+#-------------------------------------------------
+
+import numpy as np
+
+np.random.seed(1) # set the random seed for reproducibility
+
+#-------------------------------------------------
+
+### set up basic parameters
+
+num_samp = 20 # number of patients
+
+num_dim = 10 # number of dimensions used to compute probability
+
+#------------------------
+
+# draw parameters of the logistic model and features for each patient
+
+coeffs = np.random.random(num_dim) # draw random coefficients
+
+features = np.random.random((num_samp, num_dim)) # draw random variables for each patient
+
+#------------------------
+
+# compute probabilities of improving and whether individual patients improved
+
+probs = (1 + np.exp(np.sum(features*coeffs, axis=1)))**-1 # compute the logistic probability model
+
+obs = (probs < np.random.random(num_samp)).astype(int) # probabilisticall assign which patients improved
+
+#------------------------
+
+# save data
+
+### save the actual coefficients
+np.savetxt('coeffs.csv.gz', coeffs, header='coeffs', comments='')
+
+### save the observed data
+data = np.empty((num_samp, num_dim+2))
+data[:,:num_dim] = features
+data[:,num_dim] = probs
+data[:,num_dim+1] = obs
+
+header = ','.join(['feature_%03d'%_ for _ in range(num_dim)] + ['true_prob', 'obs'])
+
+np.savetxt('data.csv.gz', data, header=header, delimiter=',', comments='')
