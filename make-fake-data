@@ -14,17 +14,18 @@ np.random.seed(1) # set the random seed for reproducibility
 
 ### set up basic parameters
 
-num_samp = 20 # number of patients
+num_samp = 1000 # number of patients
 
-num_dim = 10 # number of dimensions used to compute probability
+num_dim = 5 # number of dimensions used to compute probability
 
 #------------------------
 
 # draw parameters of the logistic model and features for each patient
 
 coeffs = np.random.random(num_dim) # draw random coefficients
+coeffs[0] = 5 # make one coefficient much bigger than the others
 
-features = np.random.random((num_samp, num_dim)) # draw random variables for each patient
+features = np.random.random((num_samp, num_dim)) - 0.5 # draw random variables for each patient
 
 #------------------------
 
@@ -32,7 +33,7 @@ features = np.random.random((num_samp, num_dim)) # draw random variables for eac
 
 probs = (1 + np.exp(np.sum(features*coeffs, axis=1)))**-1 # compute the logistic probability model
 
-obs = (probs < np.random.random(num_samp)).astype(int) # probabilisticall assign which patients improved
+obs = (np.random.random(num_samp) < probs).astype(int) # probabilisticall assign which patients improved
 
 #------------------------
 

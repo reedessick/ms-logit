@@ -19,6 +19,10 @@ package_data = {}
 # set up requirements
 requires = [
     'numpy',
+    'h5py',
+    'matplotlib',
+    'corner',
+    'jax',
     'numpyro',
 ]
 

@@ -6,6 +6,8 @@ __author__ = "Reed Essick (reed.essick@gmail.com)"
 
 #-------------------------------------------------
 
+import h5py
+
 import numpy as np
 
 import jax
@@ -19,6 +21,10 @@ from numpyro.infer import (MCMC, NUTS)
 
 #-------------------------------------------------
 
+seed = 123 # pick a random seed to make result reproducible
+
+#-------------------------------------------------
+
 # load data
 
 data = np.genfromtxt('data.csv.gz', names=True, delimiter=',')
@@ -27,7 +33,7 @@ num_samp = len(data)
 num_dim = len(data.dtype.names) - 2
 
 improved = data['obs']
-features = data[:,:num_dim]
+features = np.transpose([data['feature_%03d'%_] for _ in range(num_dim)])
 
 #------------------------
 
@@ -36,7 +42,7 @@ features = data[:,:num_dim]
 def model(num_dim, features, improved):
 
     # draw priors for coefficients
-    coeffs = numpyro.sample("coeffs", dist.Uniform(-1.0, +1.0), sample_shape=(num_dim,))
+    coeffs = numpyro.sample("coeffs", dist.Uniform(-10.0, +10.0), sample_shape=(num_dim,))
 
     # compute probabilities
     logprobs = numpyro.deterministic("logprobs", -jnp.log(1+jnp.exp(jnp.sum(features*coeffs, axis=1))))
@@ -50,13 +56,25 @@ def model(num_dim, features, improved):
 # sample from that model
 
 # instantiate the sampler
-mcmc = MCMC(NUTS(model), num_warmup=100, num_samples=100)
+mcmc = MCMC(NUTS(model), num_warmup=500, num_samples=1000)
 
 # run the sample
 mcmc.run(random.PRNGKey(seed), num_dim, features, improved)
 samples = mcmc.get_samples()
 
 # record the likelihood of each sample
-samples.update(numpyro.infer.log_likelihood(model, num_dim, features, improved)
+samples.update(numpyro.infer.log_likelihood(model, samples, num_dim, features, improved))
 
-mcmc.print_summary(exclude_deterministic=False)
+mcmc.print_summary()
+
+#------------------------
+
+# save the output
+
+with h5py.File('samples.hdf', 'w') as obj:
+
+    obj.attrs.create('num_samp', data=num_samp)
+    obj.attrs.create('num_dim', data=num_dim)
+
+    for key, val in samples.items():
+        obj.create_dataset(key, data=val)

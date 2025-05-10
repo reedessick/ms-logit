@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+"""make a quick plot
+"""
+__author__ = "Reed Essick (reed.essick@gmail.com)"
+
+#-------------------------------------------------
+
+import h5py
+import numpy as np
+
+import matplotlib
+matplotlib.use("Agg")
+from matplotlib import pyplot as plt
+
+import corner
+
+#-------------------------------------------------
+
+# load true parameters
+
+true_coeffs = np.genfromtxt('coeffs.csv.gz', names=True, delimiter=',')['coeffs']
+
+#------------------------
+
+# load posterior samples
+
+samples = dict()
+with h5py.File('samples.hdf', 'r') as obj:
+    num_dim = obj.attrs['num_dim']
+    for key in obj.keys():
+        samples[key] = obj[key][:]
+
+#------------------------
+
+# make a plot
+
+fig = corner.corner(
+    samples['coeffs'],
+    labels=['c_%d'%_ for _ in range(num_dim)],
+    truths=true_coeffs,
+)
+
+fig.savefig('corner.png')
+plt.close(fig)
