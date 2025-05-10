@@ -37,7 +37,7 @@ with h5py.File('samples.hdf', 'r') as obj:
 
 fig = corner.corner(
     samples['coeffs'],
-    labels=['c_%d'%_ for _ in range(num_dim)],
+    labels=['$c_%d$'%_ for _ in range(num_dim)],
     truths=true_coeffs,
 )
 

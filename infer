@@ -56,7 +56,7 @@ def model(num_dim, features, improved):
 # sample from that model
 
 # instantiate the sampler
-mcmc = MCMC(NUTS(model), num_warmup=500, num_samples=1000)
+mcmc = MCMC(NUTS(model), num_warmup=500, num_samples=10000)
 
 # run the sample
 mcmc.run(random.PRNGKey(seed), num_dim, features, improved)

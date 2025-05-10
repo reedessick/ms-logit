@@ -20,5 +20,16 @@ and the workflow can be run via
 Specifically, our model for the probability of success is
 
 ```math
-prob = (1 + \exp(\sum(features*coefficients)))^{-1}
+prob = \left(1 + \exp(\sum_i c_i f_i) \right)^{-1}
 ```
+
+where `f_i` are the features (observed properties of each patient) and `c_i` are coefficients describing how important each feature is in determining the probability of improvement.
+Whether any individual patient improves is then randomly assigned based on the probability computed with their features and the true coefficients.
+
+  * `make-fake-data` sets up a simple data-set according to this model
+    - it writes the features of patients, whether they improved to `data.csv.gz`
+    - it also writes the true coefficients to `coeffs.csv.gz`
+  * `infer` sets up this model (including the prior for the coefficients) and then samples from the posterior
+    - it writes the posterior samples to `samples.hdf`
+  * `corner` makes a plot of the posterior distribution (over coeffients) and labels it with the true coeffients
+    - it writes `corner.png`

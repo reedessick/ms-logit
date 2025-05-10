@@ -23,7 +23,8 @@ num_dim = 5 # number of dimensions used to compute probability
 # draw parameters of the logistic model and features for each patient
 
 coeffs = np.random.random(num_dim) # draw random coefficients
-coeffs[0] = 5 # make one coefficient much bigger than the others
+coeffs[0] = +5 # make a few coefficient much bigger than the others
+coeffs[1] = -5
 
 features = np.random.random((num_samp, num_dim)) - 0.5 # draw random variables for each patient
 
