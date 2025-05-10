@@ -8,13 +8,13 @@ __author__ = "Reed Essick (reed.essick@gmail.com)"
 
 import numpy as np
 
-np.random.seed(1) # set the random seed for reproducibility
+np.random.seed(123) # set the random seed for reproducibility
 
 #-------------------------------------------------
 
 ### set up basic parameters
 
-num_samp = 1000 # number of patients
+num_samp = 25 # number of patients
 
 num_dim = 5 # number of dimensions used to compute probability
 
