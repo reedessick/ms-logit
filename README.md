@@ -33,3 +33,7 @@ Whether any individual patient improves is then randomly assigned based on the p
     - it writes the posterior samples to `samples.hdf`
   * `corner` makes a plot of the posterior distribution (over coeffients) and labels it with the true coeffients
     - it writes `corner.png`
+
+With the default sample sizes (`num_samp = 25`, `num_dim = 5`) and true coefficients set within `./make-fake-data`, we get a hyperposterior like the following.
+
+<img src="corner.png">
