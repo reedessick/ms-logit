@@ -20,7 +20,7 @@ and the workflow can be run via
 Specifically, our model for the probability of success is
 
 ```math
-prob = \left(1 + \exp(\sum_i c_i f_i) \right)^{-1}
+p(\vec{f}) = \left(1 + \exp\left(\sum_i c_i f_i\right) \right)^{-1}
 ```
 
 where `f_i` are the features (observed properties of each patient) and `c_i` are coefficients describing how important each feature is in determining the probability of improvement.
