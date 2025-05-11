@@ -22,9 +22,9 @@ num_dim = 5 # number of dimensions used to compute probability
 
 # draw parameters of the logistic model and features for each patient
 
-coeffs = np.random.random(num_dim) # draw random coefficients
-coeffs[0] = +5 # make a few coefficient much bigger than the others
-coeffs[1] = -5
+coeffs = np.random.random(num_dim+1) # draw random coefficients
+coeffs[1] = +5 # make a few coefficient much bigger than the others
+coeffs[2] = -5
 
 features = np.random.random((num_samp, num_dim)) - 0.5 # draw random variables for each patient
 
@@ -32,7 +32,7 @@ features = np.random.random((num_samp, num_dim)) - 0.5 # draw random variables f
 
 # compute probabilities of improving and whether individual patients improved
 
-probs = (1 + np.exp(np.sum(features*coeffs, axis=1)))**-1 # compute the logistic probability model
+probs = (1 + np.exp(coeffs[0] + np.sum(features*coeffs[1:], axis=1)))**-1 # compute the logistic probability model
 
 obs = (np.random.random(num_samp) < probs).astype(int) # probabilisticall assign which patients improved
 

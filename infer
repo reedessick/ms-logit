@@ -42,10 +42,10 @@ features = np.transpose([data['feature_%03d'%_] for _ in range(num_dim)])
 def model(num_dim, features, improved):
 
     # draw priors for coefficients
-    coeffs = numpyro.sample("coeffs", dist.Uniform(-10.0, +10.0), sample_shape=(num_dim,))
+    coeffs = numpyro.sample("coeffs", dist.Uniform(-10.0, +10.0), sample_shape=(num_dim+1,))
 
     # compute probabilities
-    logprobs = numpyro.deterministic("logprobs", -jnp.log(1+jnp.exp(jnp.sum(features*coeffs, axis=1))))
+    logprobs = numpyro.deterministic("logprobs", -jnp.log(1+jnp.exp(coeffs[0] + jnp.sum(features*coeffs[1:], axis=1))))
     logprobs_unimproved = jnp.log(1-jnp.exp(logprobs))
 
     # add target distribution as a factor
