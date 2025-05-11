@@ -39,4 +39,4 @@ With the default sample sizes (`num_samp = 25`, `num_dim = 5`) and true coeffici
 
 <img src="corner.png">
 
-It is apparent that the model has correctly learned that the coefficients for the first 2 features are unlikey to be zero and that the coefficients for the other 3 features are fairly consistent with zero (it is possible to quantify the statistical significance of this statement precisely in several ways).
+It is apparent that the model has correctly learned that the coefficients for 2 features are relatively unlikey to be zero and that the coefficients for the other features are fairly consistent with zero (it is possible to quantify the statistical significance of this statement precisely in several ways).
