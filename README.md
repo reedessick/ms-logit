@@ -24,7 +24,7 @@ p(\vec{f}) = \left(1 + \exp\left(c + \sum_i c_i f_i\right) \right)^{-1}
 ```
 
 where `f_i` are the features (observed properties of each patient) and `c_i` are coefficients describing how important each feature is in determining the probability of improvement.
-The additional parameters `c` sets the overall probability of improvement, independent of the features of individual patients.
+The additional parameter `c` sets the overall probability of improvement, independent of the features of individual patients.
 Whether any individual patient improves is then randomly assigned based on the probability computed with their features and the true coefficients.
 
   * `make-fake-data` sets up a simple data-set according to this model
